@@ -8,6 +8,7 @@ import com.pedroapps.californiatrips.database.DestinationsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -21,6 +22,7 @@ class MainViewModel(application: Application): AndroidViewModel(application) {
     init {
         viewModelScope.launch(Dispatchers.IO) {
             repository.getAllDestinations()
+                .distinctUntilChanged()
                 .collect { destinationsList ->
                     updateDestinationsList(destinationsList)
                 }
@@ -40,6 +42,15 @@ class MainViewModel(application: Application): AndroidViewModel(application) {
     private fun updateCurrentDestination(destination: Destination) {
         _appState.update { currentState ->
             currentState.copy(currentDestination = destination)
+        }
+    }
+
+
+    //DATABASE FUNCTIONS
+
+    fun createNewDestination(destination: Destination) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.createNewDestination(destination)
         }
     }
 

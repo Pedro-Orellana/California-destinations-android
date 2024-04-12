@@ -9,7 +9,7 @@ data class Destination(
 
     @ColumnInfo(name = "destination_id")
     @PrimaryKey(autoGenerate = true)
-    var id: Int,
+    var id: Int = 0,
 
     @ColumnInfo(name = "destination_name")
     var name: String,

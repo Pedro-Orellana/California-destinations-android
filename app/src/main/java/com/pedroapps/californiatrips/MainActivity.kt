@@ -12,8 +12,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -45,6 +47,8 @@ class MainActivity : ComponentActivity() {
 fun MainContainer() {
 
     val navController = rememberNavController()
+    val viewModel: MainViewModel = viewModel()
+    val appState = viewModel.appState.collectAsState()
 
     Scaffold(
         topBar = { AppTopAppBar() },
@@ -66,13 +70,16 @@ fun MainContainer() {
         ) {
             composable(route = ScreenDestinations.HomeScreenDestination) {
                 HomeScreen(
-                    paddingValues = paddingValues
+                    paddingValues = paddingValues,
+                    destinations = appState.value.destinations
                 )
             }
 
             composable(route = ScreenDestinations.NewDestinationScreenDestination) {
                 NewDestinationScreen(
-                    paddingValues = paddingValues
+                    paddingValues = paddingValues,
+                    navController = navController,
+                    createNewDestination = { destination -> viewModel.createNewDestination(destination)}
                 )
             }
         }
