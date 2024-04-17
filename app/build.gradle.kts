@@ -76,4 +76,7 @@ dependencies {
 
     //navigation dependency
     implementation(libs.androidx.navigation.compose)
+
+    //compose lifecycle
+    implementation(libs.androidx.lifecycle.runtime.compose)
 }

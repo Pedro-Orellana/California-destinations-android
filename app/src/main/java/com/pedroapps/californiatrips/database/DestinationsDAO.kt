@@ -14,6 +14,7 @@ interface DestinationsDAO {
     @Query("SELECT * FROM destinations_table")
     fun getAllDestinations() : Flow<List<Destination>?>
 
+    //TODO(find someone that might know what the best way to do this is? this works, but I wonder if I'm creating too many flows)
     @Query("SELECT * FROM destinations_table WHERE destination_name LIKE :destinationName")
     fun getDestinationByName(destinationName: String): Flow<Destination>
 

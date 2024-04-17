@@ -15,11 +15,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.pedroapps.californiatrips.components.AppTopAppBar
+import com.pedroapps.californiatrips.screens.DestinationDetailsScreen
 import com.pedroapps.californiatrips.screens.HomeScreen
 import com.pedroapps.californiatrips.screens.NewDestinationScreen
 import com.pedroapps.californiatrips.screens.ScreenDestinations
@@ -48,7 +52,7 @@ fun MainContainer() {
 
     val navController = rememberNavController()
     val viewModel: MainViewModel = viewModel()
-    val appState = viewModel.appState.collectAsState()
+    val appState = viewModel.appState.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = { AppTopAppBar() },
@@ -71,7 +75,10 @@ fun MainContainer() {
             composable(route = ScreenDestinations.HomeScreenDestination) {
                 HomeScreen(
                     paddingValues = paddingValues,
-                    destinations = appState.value.destinations
+                    destinations = appState.value.destinations,
+                    cardClickHandler = { destinationName ->
+                        navController.navigate("${ScreenDestinations.DetailsScreenDestination}/${destinationName}")
+                    }
                 )
             }
 
@@ -79,7 +86,24 @@ fun MainContainer() {
                 NewDestinationScreen(
                     paddingValues = paddingValues,
                     navController = navController,
-                    createNewDestination = { destination -> viewModel.createNewDestination(destination)}
+                    createNewDestination = { destination ->
+                        viewModel.createNewDestination(
+                            destination
+                        )
+                    }
+                )
+            }
+
+            composable(
+                route = "${ScreenDestinations.DetailsScreenDestination}/{destinationName}",
+                arguments = listOf(navArgument("destinationName") { type = NavType.StringType })
+            ) {
+                DestinationDetailsScreen(
+                    getDestinationByName = viewModel::getDestinationByName,
+                    getDestinationByNameFlow = viewModel::getDestinationByNameFlow,
+                    destination = appState.value.currentDestination,
+                    paddingValues = paddingValues,
+                    destinationName = it.arguments?.getString("destinationName") ?: ""
                 )
             }
         }

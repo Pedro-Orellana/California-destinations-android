@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.pedroapps.californiatrips.database.Destination
 import com.pedroapps.californiatrips.database.DestinationsRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -47,11 +48,24 @@ class MainViewModel(application: Application): AndroidViewModel(application) {
 
 
     //DATABASE FUNCTIONS
-
     fun createNewDestination(destination: Destination) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.createNewDestination(destination)
         }
+    }
+
+    fun getDestinationByName(destinationName: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.getDestinationByName(destinationName)
+                .distinctUntilChanged()
+                .collect { newDestination ->
+                    updateCurrentDestination(newDestination)
+                }
+        }
+    }
+
+    fun getDestinationByNameFlow(destinationName: String): Flow<Destination> {
+        return repository.getDestinationByName(destinationName)
     }
 
 }

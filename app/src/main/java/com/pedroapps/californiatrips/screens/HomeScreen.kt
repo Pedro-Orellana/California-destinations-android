@@ -18,7 +18,8 @@ import com.pedroapps.californiatrips.database.Destination
 @Composable
 fun HomeScreen(
     paddingValues: PaddingValues,
-    destinations: List<Destination>?
+    destinations: List<Destination>?,
+    cardClickHandler: (destinationName : String) -> Unit
 ) {
     Column(
         horizontalAlignment = Alignment.Start,
@@ -36,7 +37,10 @@ fun HomeScreen(
 
         destinations?.let { destinationsList ->
             destinationsList.forEach {
-                DestinationCard(destination = it)
+                DestinationCard(
+                    destination = it,
+                    clickHandler = cardClickHandler
+                    )
             }
         }
     }
@@ -48,6 +52,7 @@ fun HomeScreenPreview() {
     val paddingValues = PaddingValues()
     HomeScreen(
         paddingValues = paddingValues,
-        destinations = null
+        destinations = null,
+        cardClickHandler = {}
     )
 }
