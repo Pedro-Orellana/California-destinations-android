@@ -78,7 +78,8 @@ fun MainContainer() {
                     destinations = appState.value.destinations,
                     cardClickHandler = { destinationName ->
                         navController.navigate("${ScreenDestinations.DetailsScreenDestination}/${destinationName}")
-                    }
+                    },
+                    deleteDestination = viewModel::deleteDestination
                 )
             }
 

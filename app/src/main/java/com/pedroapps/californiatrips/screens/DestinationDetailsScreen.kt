@@ -24,12 +24,6 @@ fun DestinationDetailsScreen(
     destination: Destination?,
     destinationName: String
 ) {
-//    LaunchedEffect(key1 = destinationName) {
-//        if(destinationName.isNotEmpty()){
-//            getDestinationByName(destinationName)
-//
-//        }
-//    }
 
     val testDestination = Destination(
         id = 1000,

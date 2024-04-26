@@ -68,4 +68,10 @@ class MainViewModel(application: Application): AndroidViewModel(application) {
         return repository.getDestinationByName(destinationName)
     }
 
+    fun deleteDestination(destination: Destination) {
+        viewModelScope.launch {
+            repository.deleteDestination(destination = destination)
+        }
+    }
+
 }
