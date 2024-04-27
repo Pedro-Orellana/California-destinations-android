@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.pedroapps.californiatrips.components.DestinationDetailsCard
 import com.pedroapps.californiatrips.database.Destination
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -19,9 +20,7 @@ import kotlinx.coroutines.flow.flow
 @Composable
 fun DestinationDetailsScreen(
     paddingValues: PaddingValues,
-    getDestinationByName: (name: String) -> Unit,
     getDestinationByNameFlow: (name: String) -> Flow<Destination>,
-    destination: Destination?,
     destinationName: String
 ) {
 
@@ -36,6 +35,7 @@ fun DestinationDetailsScreen(
         initialValue = testDestination
     )
 
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -43,11 +43,15 @@ fun DestinationDetailsScreen(
             .fillMaxSize()
             .padding(paddingValues)
     ) {
-        Text(text = "Details Screen")
-        Text(text = "current destination: ${destinationState.value.name}")
-        Text(text = destinationState.value.description)
-        Text(text = "Has visited: ${destinationState.value.hasVisited}")
+//        Text(text = "Details Screen")
+//        Text(text = "current destination: ${destinationState.value.name}")
+//        Text(text = destinationState.value.description)
+//        Text(text = "Has visited: ${destinationState.value.hasVisited}")
+
+        DestinationDetailsCard(destination = destinationState.value)
     }
+
+
 
 }
 
@@ -66,9 +70,7 @@ fun DestinationDetailsScreenPreview() {
 
     DestinationDetailsScreen(
         paddingValues = paddingValues,
-        getDestinationByName = {},
         getDestinationByNameFlow = { flow { }},
-        destination = testDestination,
         destinationName = testDestination.name
     )
 }

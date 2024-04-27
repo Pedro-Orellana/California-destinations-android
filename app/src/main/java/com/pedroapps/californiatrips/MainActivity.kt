@@ -100,9 +100,7 @@ fun MainContainer() {
                 arguments = listOf(navArgument("destinationName") { type = NavType.StringType })
             ) {
                 DestinationDetailsScreen(
-                    getDestinationByName = viewModel::getDestinationByName,
                     getDestinationByNameFlow = viewModel::getDestinationByNameFlow,
-                    destination = appState.value.currentDestination,
                     paddingValues = paddingValues,
                     destinationName = it.arguments?.getString("destinationName") ?: ""
                 )
