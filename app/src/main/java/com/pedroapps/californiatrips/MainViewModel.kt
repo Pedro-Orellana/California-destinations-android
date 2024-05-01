@@ -74,4 +74,10 @@ class MainViewModel(application: Application): AndroidViewModel(application) {
         }
     }
 
+    fun updateDestination(destination: Destination) {
+        viewModelScope.launch {
+            repository.updateDestination(destination = destination)
+        }
+    }
+
 }

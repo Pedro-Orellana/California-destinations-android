@@ -100,9 +100,12 @@ fun MainContainer() {
                 arguments = listOf(navArgument("destinationName") { type = NavType.StringType })
             ) {
                 DestinationDetailsScreen(
-                    getDestinationByNameFlow = viewModel::getDestinationByNameFlow,
                     paddingValues = paddingValues,
-                    destinationName = it.arguments?.getString("destinationName") ?: ""
+                    navController = navController,
+                    destinationName = it.arguments?.getString("destinationName") ?: "",
+                    getDestinationByNameFlow = viewModel::getDestinationByNameFlow,
+                    deleteDestination = viewModel::deleteDestination,
+                    updateDestination = viewModel::updateDestination
                 )
             }
         }
