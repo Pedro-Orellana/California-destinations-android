@@ -5,12 +5,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.pedroapps.californiatrips.components.DestinationDetailsCard
 import com.pedroapps.californiatrips.database.Destination
 import kotlinx.coroutines.flow.Flow
@@ -20,8 +21,11 @@ import kotlinx.coroutines.flow.flow
 @Composable
 fun DestinationDetailsScreen(
     paddingValues: PaddingValues,
+    navController: NavHostController,
+    destinationName: String,
     getDestinationByNameFlow: (name: String) -> Flow<Destination>,
-    destinationName: String
+    deleteDestination: (destination: Destination) -> Unit,
+    updateDestination: (destination: Destination) -> Unit
 ) {
 
     val testDestination = Destination(
@@ -30,7 +34,7 @@ fun DestinationDetailsScreen(
         description = "A beautiful city with many things to see and do",
         hasVisited = true
     )
-    
+
     val destinationState = getDestinationByNameFlow(destinationName).collectAsStateWithLifecycle(
         initialValue = testDestination
     )
@@ -43,14 +47,14 @@ fun DestinationDetailsScreen(
             .fillMaxSize()
             .padding(paddingValues)
     ) {
-//        Text(text = "Details Screen")
-//        Text(text = "current destination: ${destinationState.value.name}")
-//        Text(text = destinationState.value.description)
-//        Text(text = "Has visited: ${destinationState.value.hasVisited}")
 
-        DestinationDetailsCard(destination = destinationState.value)
+        DestinationDetailsCard(
+            destination = destinationState.value,
+            deleteDestination = deleteDestination,
+            updateDestination = updateDestination,
+            navController = navController
+        )
     }
-
 
 
 }
@@ -70,7 +74,10 @@ fun DestinationDetailsScreenPreview() {
 
     DestinationDetailsScreen(
         paddingValues = paddingValues,
-        getDestinationByNameFlow = { flow { }},
-        destinationName = testDestination.name
+        navController = rememberNavController(),
+        destinationName = testDestination.name,
+        getDestinationByNameFlow = { flow { } },
+        deleteDestination = {},
+        updateDestination = {}
     )
 }
