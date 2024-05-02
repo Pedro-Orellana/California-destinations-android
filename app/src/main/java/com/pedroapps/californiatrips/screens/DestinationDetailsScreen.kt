@@ -35,6 +35,8 @@ fun DestinationDetailsScreen(
         hasVisited = true
     )
 
+
+    //TODO(get destination by ID not by name)
     val destinationState = getDestinationByNameFlow(destinationName).collectAsStateWithLifecycle(
         initialValue = testDestination
     )
