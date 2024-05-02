@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
@@ -54,41 +55,27 @@ fun DestinationDetailsCard(
         mutableStateOf(false)
     }
 
-
-    ElevatedCard(
-        elevation = CardDefaults.elevatedCardElevation(
-            defaultElevation = 12.dp
-        ),
-        colors = CardDefaults.elevatedCardColors(
-            containerColor = Color.LightGray
-        ),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 12.dp, end = 12.dp, top = 12.dp)
-    ) {
-    //TODO(The animation looks a little clunky here
-        // Instead of creating an animation for the contents of the card
-        // create an animation for the whole card)
-        Crossfade(
-            targetState = editMode,
-            label = "crossfade effect for content"
-        ) { isInEditMode ->
-            if (isInEditMode) {
-                EditModeContent(
-                    destination = destination,
-                    setEditMode = setEditMode
-                )
-            } else {
-                CardContent(
-                    destination = destination,
-                    setShowDialog = setShowDialog,
-                    setEditMode = setEditMode
-                )
-            }
+    Crossfade(
+        targetState = editMode,
+        label = "crossfade effect for content"
+    ) { isInEditMode ->
+        if (isInEditMode) {
+            EditModeContent(
+                destination = destination,
+                setEditMode = setEditMode,
+                updateDestination = updateDestination
+            )
+        } else {
+            CardContent(
+                destination = destination,
+                setShowDialog = setShowDialog,
+                setEditMode = setEditMode
+            )
         }
-
-
     }
+
+
+
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { setShowDialog(false) },
@@ -132,12 +119,6 @@ private fun CardContent(
     setEditMode: (Boolean) -> Unit
 ) {
 
-    val hasVisitedText = if (destination.hasVisited) {
-        "I have been here before"
-    } else {
-        "I will visit one day!"
-    }
-
     val hasVisitedIcon = if (destination.hasVisited) {
         Icons.Filled.Check
     } else {
@@ -146,59 +127,79 @@ private fun CardContent(
 
     val iconColor = if (destination.hasVisited) Color.Green else Color.Red
 
+    val hasVisitedText = if (destination.hasVisited) {
+        "I have been here before"
+    } else {
+        "I will visit one day!"
+    }
 
-    Column {
+    ElevatedCard(
+        elevation = CardDefaults.elevatedCardElevation(
+            defaultElevation = 12.dp
+        ),
+        colors = CardDefaults.elevatedCardColors(
+            containerColor = Color.LightGray
+        ),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(400.dp)
+            .padding(start = 12.dp, end = 12.dp, top = 12.dp)
+    ) {
 
-        Text(
-            text = destination.name,
-            textAlign = TextAlign.Center,
-            fontSize = 18.sp,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 20.dp)
-        )
+        Column {
 
-        Text(
-            text = destination.description,
-            textAlign = TextAlign.Justify,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 20.dp, end = 20.dp, top = 24.dp)
-        )
-
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 20.dp)
-
-        ) {
-            Text(text = hasVisitedText)
-            Spacer(modifier = Modifier.padding(8.dp))
-            Icon(
-                imageVector = hasVisitedIcon,
-                contentDescription = "visited icon",
-                tint = iconColor
+            Text(
+                text = destination.name,
+                textAlign = TextAlign.Center,
+                fontSize = 18.sp,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 20.dp)
             )
-        }
 
+            Text(
+                text = destination.description,
+                textAlign = TextAlign.Justify,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 20.dp, end = 20.dp, top = 24.dp)
+            )
 
-        Row(
-            horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 20.dp, end = 20.dp, bottom = 12.dp)
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 20.dp)
 
-        ) {
-            TextButton(onClick = { setEditMode(true) }) {
-                Text(text = "Edit")
+            ) {
+                Text(text = hasVisitedText)
+                Spacer(modifier = Modifier.padding(8.dp))
+                Icon(
+                    imageVector = hasVisitedIcon,
+                    contentDescription = "visited icon",
+                    tint = iconColor
+                )
             }
 
-            Button(onClick = { setShowDialog(true) }) {
-                Text(text = "Delete")
+
+            Row(
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 20.dp, end = 20.dp, bottom = 12.dp)
+
+            ) {
+                TextButton(onClick = { setEditMode(true) }) {
+                    Text(text = "Edit")
+                }
+
+                Button(onClick = { setShowDialog(true) }) {
+                    Text(text = "Delete")
+                }
             }
+
         }
 
     }
@@ -208,90 +209,122 @@ private fun CardContent(
 @Composable
 private fun EditModeContent(
     destination: Destination,
-    setEditMode: (Boolean) -> Unit
+    setEditMode: (Boolean) -> Unit,
+    updateDestination: (Destination) -> Unit
 ) {
 
-    val updatedDestination = remember {
-        mutableStateOf(destination)
+    val updatedName = remember {
+        mutableStateOf(destination.name)
     }
 
-    Column {
-        TextField(
-            value = updatedDestination.value.name,
-            onValueChange = { updatedDestination.value.name = it },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 12.dp, end = 12.dp, top = 20.dp)
-        )
+    val updatedDescription = remember {
+        mutableStateOf(destination.description)
+    }
 
-        TextField(
-            value = updatedDestination.value.description,
-            onValueChange = { updatedDestination.value.description = it },
-            minLines = 3,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 12.dp, end = 12.dp, top = 20.dp)
-        )
+    val updatedVisited = remember {
+        mutableStateOf(destination.hasVisited)
+    }
 
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .selectableGroup()
-                .padding(top = 20.dp)
-        ) {
-            Row(
-                horizontalArrangement = Arrangement.Start,
-                verticalAlignment = Alignment.CenterVertically,
+    ElevatedCard(
+        elevation = CardDefaults.elevatedCardElevation(
+            defaultElevation = 12.dp
+        ),
+        colors = CardDefaults.elevatedCardColors(
+            containerColor = Color.LightGray
+        ),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(400.dp)
+            .padding(start = 12.dp, end = 12.dp, top = 12.dp)
+    ) {
+
+        Column {
+            TextField(
+                value = updatedName.value,
+                onValueChange = { updatedName.value = it },
                 modifier = Modifier
-                    .selectable(
-                        selected = updatedDestination.value.hasVisited,
-                        role = Role.RadioButton,
-                        enabled = true,
-                        onClick = { updatedDestination.value.hasVisited = true }
-                    )
-                    .padding(bottom = 12.dp)
+                    .fillMaxWidth()
+                    .padding(start = 12.dp, end = 12.dp, top = 20.dp)
+            )
+
+            TextField(
+                value = updatedDescription.value,
+                onValueChange = { updatedDescription.value = it },
+                minLines = 3,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 12.dp, end = 12.dp, top = 20.dp)
+            )
+
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .selectableGroup()
+                    .padding(top = 20.dp)
             ) {
-                RadioButton(selected = updatedDestination.value.hasVisited, onClick = null)
-                Text(text = "I have been here")
+                Row(
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .selectable(
+                            selected = updatedVisited.value,
+                            role = Role.RadioButton,
+                            enabled = true,
+                            onClick = { updatedVisited.value = true }
+                        )
+                        .padding(bottom = 12.dp)
+                ) {
+                    RadioButton(selected = updatedVisited.value, onClick = null)
+                    Text(text = "I have been here")
+                }
+
+                Row(
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .selectable(
+                            selected = !updatedVisited.value,
+                            role = Role.RadioButton,
+                            enabled = true,
+                            onClick = { updatedVisited.value = false }
+                        )
+                        .padding(bottom = 12.dp)
+                ) {
+                    RadioButton(selected = !updatedVisited.value, onClick = null)
+                    Text(text = "I have not been here")
+                }
             }
 
+
             Row(
-                horizontalArrangement = Arrangement.Start,
+                horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
-                    .selectable(
-                        selected = !updatedDestination.value.hasVisited,
-                        role = Role.RadioButton,
-                        enabled = true,
-                        onClick = { updatedDestination.value.hasVisited = false }
-                    )
-                    .padding(bottom = 12.dp)
+                    .fillMaxWidth()
+                    .padding(end = 12.dp)
             ) {
-                RadioButton(selected = !updatedDestination.value.hasVisited, onClick = null)
-                Text(text = "I have not been here")
+                Button(onClick = { setEditMode(false) }) {
+                    Text(text = "Cancel")
+                }
+
+                TextButton(onClick = {
+                    val updatedDestination = Destination(
+                        id = destination.id,
+                        name = updatedName.value,
+                        description = updatedDescription.value,
+                        hasVisited = updatedVisited.value
+                    )
+                    updateDestination(updatedDestination)
+                    setEditMode(false)
+                }) {
+                    Text(text = "Save")
+                }
             }
         }
 
-
-        Row(
-            horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(end = 12.dp)
-        ) {
-            Button(onClick = { setEditMode(false) }) {
-                Text(text = "Cancel")
-            }
-
-            TextButton(onClick = { /*TODO*/ }) {
-                Text(text = "Save")
-            }
-        }
     }
-
 
 }
 
@@ -332,20 +365,11 @@ fun EditModeContentPreview() {
         hasVisited = true
     )
 
-    ElevatedCard(
-        elevation = CardDefaults.elevatedCardElevation(
-            defaultElevation = 12.dp
-        ),
-        colors = CardDefaults.elevatedCardColors(
-            containerColor = Color.LightGray
-        ),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 12.dp, end = 12.dp, top = 12.dp)
-    ) {
-        EditModeContent(
-            destination = testDestination,
-            setEditMode = {})
-    }
+    EditModeContent(
+        destination = testDestination,
+        setEditMode = {},
+        updateDestination = {}
+    )
+
 
 }
