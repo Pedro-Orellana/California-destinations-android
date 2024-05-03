@@ -41,7 +41,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun DestinationCard(
     destination: Destination,
-    clickHandler: (destinationName: String) -> Unit,
+    clickHandler: (destinationID: Int) -> Unit,
 ) {
     ElevatedCard(
         shape = CardDefaults.elevatedShape,
@@ -50,7 +50,7 @@ fun DestinationCard(
         ),
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { clickHandler(destination.name) }
+            .clickable { clickHandler(destination.id) }
 
     ) {
         Text(

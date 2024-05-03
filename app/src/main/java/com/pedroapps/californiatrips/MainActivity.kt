@@ -56,16 +56,6 @@ fun MainContainer() {
 
     Scaffold(
         topBar = { AppTopAppBar() },
-        floatingActionButton = {
-            FloatingActionButton(onClick = {
-                navController.navigate(ScreenDestinations.NewDestinationScreenDestination)
-            }) {
-                Icon(
-                    imageVector = Icons.Outlined.Add,
-                    contentDescription = "Create new destination button"
-                )
-            }
-        }
     ) { paddingValues ->
 
         NavHost(
@@ -76,9 +66,10 @@ fun MainContainer() {
                 HomeScreen(
                     paddingValues = paddingValues,
                     destinations = appState.value.destinations,
-                    cardClickHandler = { destinationName ->
-                        navController.navigate("${ScreenDestinations.DetailsScreenDestination}/${destinationName}")
+                    cardClickHandler = { destinationID ->
+                        navController.navigate("${ScreenDestinations.DetailsScreenDestination}/${destinationID}")
                     },
+                    addDestinationClickHandler = { navController.navigate(ScreenDestinations.NewDestinationScreenDestination) },
                     deleteDestination = viewModel::deleteDestination
                 )
             }
@@ -96,14 +87,14 @@ fun MainContainer() {
             }
 
             composable(
-                route = "${ScreenDestinations.DetailsScreenDestination}/{destinationName}",
-                arguments = listOf(navArgument("destinationName") { type = NavType.StringType })
+                route = "${ScreenDestinations.DetailsScreenDestination}/{destinationID}",
+                arguments = listOf(navArgument("destinationID") { type = NavType.IntType })
             ) {
                 DestinationDetailsScreen(
                     paddingValues = paddingValues,
                     navController = navController,
-                    destinationName = it.arguments?.getString("destinationName") ?: "",
-                    getDestinationByNameFlow = viewModel::getDestinationByNameFlow,
+                    destinationID = it.arguments?.getInt("destinationID") ?: 0,
+                    getDestinationByIDFlow = viewModel::getDestinationByIDFlow,
                     deleteDestination = viewModel::deleteDestination,
                     updateDestination = viewModel::updateDestination
                 )

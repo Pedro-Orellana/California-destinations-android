@@ -18,6 +18,9 @@ interface DestinationsDAO {
     @Query("SELECT * FROM destinations_table WHERE destination_name LIKE :destinationName")
     fun getDestinationByName(destinationName: String): Flow<Destination>
 
+    @Query("SELECT * FROM destinations_table WHERE destination_id LIKE :destinationID")
+    fun getDestinationByID(destinationID: Int): Flow<Destination>
+
     @Insert(entity = Destination::class, onConflict = OnConflictStrategy.REPLACE)
     suspend fun createNewDestination(destination: Destination)
 

@@ -17,6 +17,10 @@ class DestinationsRepository(application: Application) {
         return destinationsDao.getDestinationByName(name)
     }
 
+    fun getDestinationByID(id: Int) : Flow<Destination> {
+        return destinationsDao.getDestinationByID(id)
+    }
+
     suspend fun createNewDestination(destination: Destination) {
         destinationsDao.createNewDestination(destination)
     }

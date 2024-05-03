@@ -68,6 +68,10 @@ class MainViewModel(application: Application): AndroidViewModel(application) {
         return repository.getDestinationByName(destinationName)
     }
 
+    fun getDestinationByIDFlow(destinationID: Int) : Flow<Destination> {
+        return repository.getDestinationByID(destinationID)
+    }
+
     fun deleteDestination(destination: Destination) {
         viewModelScope.launch {
             repository.deleteDestination(destination = destination)
