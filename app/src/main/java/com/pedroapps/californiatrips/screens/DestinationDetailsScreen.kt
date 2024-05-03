@@ -22,8 +22,8 @@ import kotlinx.coroutines.flow.flow
 fun DestinationDetailsScreen(
     paddingValues: PaddingValues,
     navController: NavHostController,
-    destinationName: String,
-    getDestinationByNameFlow: (name: String) -> Flow<Destination>,
+    destinationID: Int,
+    getDestinationByIDFlow: (Int) -> Flow<Destination>,
     deleteDestination: (destination: Destination) -> Unit,
     updateDestination: (destination: Destination) -> Unit
 ) {
@@ -36,8 +36,7 @@ fun DestinationDetailsScreen(
     )
 
 
-    //TODO(get destination by ID not by name)
-    val destinationState = getDestinationByNameFlow(destinationName).collectAsStateWithLifecycle(
+    val destinationState = getDestinationByIDFlow(destinationID).collectAsStateWithLifecycle(
         initialValue = testDestination
     )
 
@@ -77,8 +76,8 @@ fun DestinationDetailsScreenPreview() {
     DestinationDetailsScreen(
         paddingValues = paddingValues,
         navController = rememberNavController(),
-        destinationName = testDestination.name,
-        getDestinationByNameFlow = { flow { } },
+        destinationID = testDestination.id,
+        getDestinationByIDFlow = { flow { } },
         deleteDestination = {},
         updateDestination = {}
     )

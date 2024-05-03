@@ -57,7 +57,7 @@ fun DestinationDetailsCard(
 
     Crossfade(
         targetState = editMode,
-        label = "crossfade effect for content"
+        label = "cross fade effect for content"
     ) { isInEditMode ->
         if (isInEditMode) {
             EditModeContent(
